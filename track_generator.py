@@ -13,8 +13,8 @@ class TrackGenerator:
 
     def __init__(self, n_points, n_regions, mode, plot_track, output_file):
         # Input parameters
-        self._n_points = n_points
-        self._n_regions = n_regions
+        self._n_points = n_points                                               # [-]
+        self._n_regions = n_regions                                             # [-]
         self._min_bound, self._max_bound = 0., 400.                             # [m]
         self._bounding_box = np.array([self._min_bound, self._max_bound] * 2)   # [x_min, x_max, y_min, y_max]
         self._mode = mode
