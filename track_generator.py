@@ -11,7 +11,7 @@ class TrackGenerator:
     Ensures that the tracks curvature is within limits and that the car starts at a straight section.
     """
 
-    def __init__(self, n_points, n_regions, mode):
+    def __init__(self, n_points, n_regions, mode, plot_track, output_file):
         # Input parameters
         self._n_points = n_points
         self._n_regions = n_regions
@@ -27,8 +27,8 @@ class TrackGenerator:
         self._straight_threshold = 1. / 100.                                    # [m^-1]
 
         # Output options
-        self._create_output_file = False
-        self._plot_track = True
+        self._plot_track = plot_track
+        self._output_file = output_file
 
     def bounded_voronoi(self, input_points, bounding_box):
         """
@@ -204,7 +204,7 @@ class TrackGenerator:
 
         # Create track file
         if self._plot_track: self.plot_track(vor, sorted_vertices, random_point_indices, input_points)
-        if self._create_output_file: self.output_yaml(cones_left.tolist(), cones_right.tolist())
+        if self._output_file: self.output_yaml(cones_left.tolist(), cones_right.tolist())
 
     def plot_track(self, vor, sorted_vertices, random_point_indices, input_points):
         # Plot initial points
