@@ -2,14 +2,18 @@ from track_generator import TrackGenerator
 from utils import Mode
 
 # Input parameters
-n_points = 100
+n_points = 150
 n_regions = 10
-mode = Mode.EXTEND
+min_bound = 0.
+max_bound = 150.
+mode = Mode.RANDOM
 
 # Output options
 plot_track = True
-output_file = False
+visualise_voronoi = True
+create_output_file = False
+output_location = '/'
 
 # Generate track
-track_gen = TrackGenerator(n_regions, n_points, mode, plot_track, output_file)
+track_gen = TrackGenerator(n_points, n_regions, min_bound, max_bound, mode, plot_track, visualise_voronoi,create_output_file, output_location)
 track_gen.create_track()

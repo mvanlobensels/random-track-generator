@@ -11,11 +11,22 @@ class TrackGenerator:
     Ensures that the tracks curvature is within limits and that the car starts at a straight section.
     """
 
-    def __init__(self, n_points, n_regions, mode, plot_track, output_file):
+    def __init__(self, 
+                 n_points: int, 
+                 n_regions: int, 
+                 min_bound: float, 
+                 max_bound: float, 
+                 mode: Mode, 
+                 plot_track: bool, 
+                 visualise_voronoi: bool,
+                 create_output_file: bool, 
+                 output_location: str):
+                 
         # Input parameters
         self._n_points = n_points                                               # [-]
         self._n_regions = n_regions                                             # [-]
-        self._min_bound, self._max_bound = 0., 400.                             # [m]
+        self._min_bound = min_bound                                             # [m]
+        self._max_bound = max_bound                                             # [m]
         self._bounding_box = np.array([self._min_bound, self._max_bound] * 2)   # [x_min, x_max, y_min, y_max]
         self._mode = mode
 
@@ -28,7 +39,9 @@ class TrackGenerator:
 
         # Output options
         self._plot_track = plot_track
-        self._output_file = output_file
+        self._visualise_voronoi = visualise_voronoi
+        self._create_output_file = create_output_file
+        self._output_location = output_location
 
     def bounded_voronoi(self, input_points, bounding_box):
         """
@@ -192,7 +205,10 @@ class TrackGenerator:
                 
         # Find start line and start pose
         length_start_area = self._length_start_area if length_straights.max() > self._length_start_area else length_straights.max()
-        start_line_index = np.where(length_straights > length_start_area)[0][0]
+        try:
+            start_line_index = np.where(length_straights > length_start_area)[0][0]
+        except IndexError:
+            raise Exception("Unable to find suitable starting position. Try to decrease the length of the starting area or differnt input parameters.")
         start_line = [x[start_line_index], y[start_line_index]]
         start_position = np.asarray(track.exterior.interpolate(np.sum(distances[:start_line_index]) - length_start_area)).flatten() 
         start_heading = float(np.arctan2(*(start_line - start_position)))
@@ -203,10 +219,20 @@ class TrackGenerator:
         cones_right = M.dot(np.c_[cones_right, np.ones(len(cones_right))].T)[:-1].T
 
         # Create track file
-        if self._plot_track: self.plot_track(vor, sorted_vertices, random_point_indices, input_points)
-        if self._output_file: self.output_yaml(cones_left.tolist(), cones_right.tolist())
+        if self._visualise_voronoi: self.visualise_voronoi(vor, sorted_vertices, random_point_indices, input_points, x, y)
+        if self._plot_track: self.plot_track(cones_left, cones_right)
+        if self._create_output_file: self.output_yaml(cones_left.tolist(), cones_right.tolist())
 
-    def plot_track(self, vor, sorted_vertices, random_point_indices, input_points):
+    def visualise_voronoi(self, vor, sorted_vertices, random_point_indices, input_points, x, y):
+        """
+        Visualises the voronoi diagram and the resulting track. 
+
+        Args:
+            vor (scipy.spatial.qhull.Voronoi): Voronoi diagram object.
+            sorted_vertices (numpy.ndarray): Selected vertices sorted clockwise.
+            random_point_indices (numpy.ndarray): Selected points.
+            input_points (numpy.ndarray): All Voronoi points.
+        """
         # Plot initial points
         plt.figure()
         plt.plot(vor.filtered_points[:, 0], vor.filtered_points[:, 1], 'b.')
@@ -221,27 +247,49 @@ class TrackGenerator:
             vertices = vor.vertices[region + [region[0]], :]
             plt.plot(vertices[:, 0], vertices[:, 1], 'k-')
 
-        # Plot random vertices
-        plt.scatter(sorted_vertices[:,0], sorted_vertices[:,1], color='y', s=200)
+        # Plot selected vertices
+        plt.scatter(sorted_vertices[:,0], sorted_vertices[:,1], color='y', s=200, label='Selected vertices')
 
-        # Plot random points
-        for i in random_point_indices:
-            plt.scatter(input_points[i][0], input_points[i][1], s=100, marker='x', color='b')
+        # Plot selected points
+        plt.scatter(*input_points[random_point_indices].T, s=100, marker='x', color='b', label='Selected points')
 
         # Plot track
         plt.scatter(x, y)
+        plt.xlabel('x [m]')
+        plt.ylabel('y [m]')
         plt.axis('equal')
+        plt.legend()
+        plt.show()
+
+    def plot_track(self, cones_left, cones_right):
+        """
+        Plots the resulting track. The car will start at the origin.
+
+        Args: 
+            cones_left (numpy.ndarray): Nx2 numpy array of left cone coordinates.
+            cones_right (numpy.ndarray): Nx2 numpy array of right cone coordinates.       
+        """
+        plt.figure()
+        plt.scatter(*cones_left.T, color='b', s=1)
+        plt.scatter(*cones_right.T, color='y', s=1)
+
+        plt.xlabel('x [m]')
+        plt.ylabel('y [m]')
+        plt.axis('equal')
+        plt.grid()
+        plt.show()
         
     def output_yaml(self, cones_left, cones_right):
         """
         Writes the track data to a yaml file.
+
         Args:
             cones_left (list): Nx2 list of left cone coordinates.
             cones_right (list): Nx2 list of right cone coordinates.
         """
         abs_path_dir = os.path.realpath(os.path.dirname(__file__))
-        track_file_dir = abs_path_dir + "/../config/tracks_yaml/"
-        track_file_name = track_file_dir + 'random.yaml'
+        track_file_dir = abs_path_dir + self._output_location
+        track_file_name = track_file_dir + 'random_track.yaml'
 
         with open(track_file_name, 'w') as outfile:
             data = dict()
