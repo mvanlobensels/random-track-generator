@@ -1,7 +1,7 @@
 <!-- ![Extend](images/extend.png) ![Expand](images/expand.png) -->
 <p float="left">
-  <img src="images/extend.png" width="50%" />
-  <img src="images/expand.png" width="50%" /> 
+  <img src="images/extend.png" width="45%" />
+  <img src="images/expand.png" width="45%" /> 
 </p>
 
 # Random Track Generator
