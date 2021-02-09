@@ -1,5 +1,5 @@
 <!-- ![Extend](images/extend.png) ![Expand](images/expand.png) -->
-<p float="left">
+<p float="middle">
   <img src="images/extend.png" width="45%" />
   <img src="images/expand.png" width="45%" /> 
 </p>
