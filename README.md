@@ -1,5 +1,4 @@
-![Extend](images/extend.png)
-![Expand](images/expand.png)
+![Extend](images/extend.png) ![Expand](images/expand.png)
 
 # Random Track Generator
 
