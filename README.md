@@ -5,7 +5,7 @@
   <img src="img/expand.png" width="45%" /> 
 </p>
 
-Generate random tracks of different shapes and sizes that adhere to the Formula Student Rules for the Formula Student Driverless competitions. This script was developed by [Formula Student Team Delft](fsteamdelft.nl), used for an [FSSIM](https://github.com/AMZ-Driverless/fssim) based simulator.
+Generate random tracks of different shapes and sizes that adhere to the Formula Student Rules for the Formula Student Driverless competitions in terms of track width, cone spacing and corner radius. This script was developed by [Formula Student Team Delft](fsteamdelft.nl), used for an [FSSIM](https://github.com/AMZ-Driverless/fssim) based simulator.
 
 ## Description
 
