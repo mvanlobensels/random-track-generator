@@ -208,7 +208,7 @@ class TrackGenerator:
         try:
             start_line_index = np.where(length_straights > length_start_area)[0][0]
         except IndexError:
-            raise Exception("Unable to find suitable starting position. Try to decrease the length of the starting area or differnt input parameters.")
+            raise Exception("Unable to find suitable starting position. Try to decrease the length of the starting area or different input parameters.")
         start_line = [x[start_line_index], y[start_line_index]]
         start_position = np.asarray(track.exterior.interpolate(np.sum(distances[:start_line_index]) - length_start_area)).flatten() 
         start_heading = float(np.arctan2(*(start_line - start_position)))
