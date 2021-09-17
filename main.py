@@ -2,11 +2,11 @@ from track_generator import TrackGenerator
 from utils import Mode
 
 # Input parameters
-n_points = 150
-n_regions = 10
+n_points = 60
+n_regions = 20
 min_bound = 0.
 max_bound = 150.
-mode = Mode.RANDOM
+mode = Mode.EXTEND
 
 # Output options
 plot_track = True

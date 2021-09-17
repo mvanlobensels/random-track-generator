@@ -22,6 +22,8 @@ The tracks are generated using a bounded Voronoi diagram, which is created from 
     2. *Extend*: Select a region randomly. Draw a line with random orientation and find the closest n regions to this line.
     3. *Random*: Select n regions randomly.
 
+**Please note that not all settings result in stable behaviour, and a track might not be found for your selected settings.**
+
 ### Track parameters
 
 * *track_width*: Track width in meters.
@@ -59,7 +61,7 @@ pip3 install -r requirements.txt
 ## Run
 
 ```python
-python main.py
+python3 main.py
 ```
 
 ## Credits
