@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 from scipy import signal, spatial, interpolate
 from shapely.geometry.polygon import Point, LineString, Polygon
 from utils import *
+from enum import Enum
+
+class SimType(Enum):
+    FSSIM = 0
+    FSDS = 1
 
 class TrackGenerator:
     """
@@ -20,7 +25,8 @@ class TrackGenerator:
                  plot_track: bool, 
                  visualise_voronoi: bool,
                  create_output_file: bool, 
-                 output_location: str):
+                 output_location: str,
+                 simtype: SimType):
                  
         # Input parameters
         self._n_points = n_points                                               # [-]
@@ -29,9 +35,10 @@ class TrackGenerator:
         self._max_bound = max_bound                                             # [m]
         self._bounding_box = np.array([self._min_bound, self._max_bound] * 2)   # [x_min, x_max, y_min, y_max]
         self._mode = mode
+        self._simtype = simtype
 
         # Track parameters
-        self._track_width = 3.                                                  # [m]
+        self._track_width = 4.                                                  # [m]
         self._cone_spacing = 5.                                                 # [m]
         self._length_start_area = 6.                                            # [m]
         self._curvature_threshold = 1. / 3.75                                   # [m^-1]
@@ -289,14 +296,33 @@ class TrackGenerator:
         """
         abs_path_dir = os.path.realpath(os.path.dirname(__file__))
         track_file_dir = abs_path_dir + self._output_location
-        track_file_name = track_file_dir + 'random_track.yaml'
+        
+        if(self._simtype == SimType.FSSIM):
+            track_file_name = track_file_dir + 'random_track.yaml'
 
-        with open(track_file_name, 'w') as outfile:
-            data = dict()
-            data['cones_left'] = cones_left
-            data['cones_right'] = cones_right
-            data['cones_orange'] = []
-            data['cones_orange_big'] = [[4.7, 2.5], [4.7, -2.5], [7.3, 2.5], [7.3, -2.5]]
-            data['starting_pose_cg'] = [0., 0., 0.]
-            data['tk_device'] = [[6., 3.], [6., -3.]]
-            yaml.dump(data, outfile)
+            with open(track_file_name, 'w') as outfile:
+                data = dict()
+                data['cones_left'] = cones_left
+                data['cones_right'] = cones_right
+                data['cones_orange'] = []
+                data['cones_orange_big'] = [[4.7, 2.5], [4.7, -2.5], [7.3, 2.5], [7.3, -2.5]]
+                data['starting_pose_cg'] = [0., 0., 0.]
+                data['tk_device'] = [[6., 3.], [6., -3.]]
+                yaml.dump(data, outfile)
+            
+        elif(self._simtype == SimType.FSDS):
+            track_file_name = track_file_dir + 'random_track.csv'
+            
+            print("Saving " + track_file_name)
+            
+            with open(track_file_name, 'w') as outfile:
+                for cone in cones_left:
+                    outfile.write("blue," + str(cone[0]) + ',' + str(cone[1]) + ',0,0.01,0.01,0\n')
+                    
+                for cone in cones_right:
+                    outfile.write("yellow," + str(cone[0]) + ',' + str(cone[1]) + ',0,0.01,0.01,0\n')
+                    
+                outfile.write("big_orange,4.7,2.2,0,0.01,0.01,0\n")
+                outfile.write("big_orange,4.7,-2.2,0,0.01,0.01,0\n")
+                outfile.write("big_orange,7.3,2.2,0,0.01,0.01,0\n")
+                outfile.write("big_orange,7.3,-2.2,0,0.01,0.01,0\n")
