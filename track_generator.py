@@ -38,7 +38,7 @@ class TrackGenerator:
         self._simtype = simtype
 
         # Track parameters
-        self._track_width = 4.                                                  # [m]
+        self._track_width = 3.                                                  # [m]
         self._cone_spacing = 5.                                                 # [m]
         self._length_start_area = 6.                                            # [m]
         self._curvature_threshold = 1. / 3.75                                   # [m^-1]
