@@ -5,7 +5,7 @@
   <img src="img/expand.png" width="45%" /> 
 </p>
 
-Generate random tracks of different shapes and sizes that adhere to the Formula Student Rules for the Formula Student Driverless competitions in terms of track width, cone spacing and corner radius. This script was developed by [Formula Student Team Delft](fsteamdelft.nl), used for an [FSSIM](https://github.com/AMZ-Driverless/fssim) based simulator.
+Generate random tracks of different shapes and sizes that adhere to the Formula Student Rules for the Formula Student Driverless competitions in terms of track width, cone spacing and corner radius. This script was developed by [Formula Student Team Delft](fsteamdelft.nl), used for an [FSSIM](https://github.com/AMZ-Driverless/fssim) based simulator or the [Formula Student Driverless Simulator](https://github.com/FS-Driverless/Formula-Student-Driverless-Simulator).
 
 ## Description
 
@@ -38,7 +38,8 @@ The tracks are generated using a bounded Voronoi diagram, which is created from 
 * *visualise_voronoi*: Visualise the Voronoi diagram and selected regions.
 * *create_output_file*: Create yaml output track file.
 * *output_location*: Location to output track file.
-
+* *simtype*: Selection between output format for different simulators
+  
 <p float="middle">
   <img src="img/voronoi.png" width="50%" /> 
 </p>
