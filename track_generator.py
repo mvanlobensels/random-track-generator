@@ -6,10 +6,6 @@ from shapely.geometry.polygon import Point, LineString, Polygon
 from utils import *
 from enum import Enum
 
-class SimType(Enum):
-    FSSIM = 0
-    FSDS = 1
-
 class TrackGenerator:
     """
     Generates a random track based on a bounded Voronoi diagram.
@@ -26,7 +22,7 @@ class TrackGenerator:
                  visualise_voronoi: bool,
                  create_output_file: bool, 
                  output_location: str,
-                 simtype: SimType):
+                 sim_type: SimType):
                  
         # Input parameters
         self._n_points = n_points                                               # [-]
@@ -35,7 +31,7 @@ class TrackGenerator:
         self._max_bound = max_bound                                             # [m]
         self._bounding_box = np.array([self._min_bound, self._max_bound] * 2)   # [x_min, x_max, y_min, y_max]
         self._mode = mode
-        self._simtype = simtype
+        self._sim_type = sim_type
 
         # Track parameters
         self._track_width = 3.                                                  # [m]
@@ -297,7 +293,7 @@ class TrackGenerator:
         abs_path_dir = os.path.realpath(os.path.dirname(__file__))
         track_file_dir = abs_path_dir + self._output_location
         
-        if(self._simtype == SimType.FSSIM):
+        if(self._sim_type == SimType.FSSIM):
             track_file_name = track_file_dir + 'random_track.yaml'
 
             with open(track_file_name, 'w') as outfile:
@@ -310,7 +306,7 @@ class TrackGenerator:
                 data['tk_device'] = [[6., 3.], [6., -3.]]
                 yaml.dump(data, outfile)
             
-        elif(self._simtype == SimType.FSDS):
+        elif(self._sim_type == SimType.FSDS):
             track_file_name = track_file_dir + 'random_track.csv'
             
             print("Saving " + track_file_name)

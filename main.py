@@ -1,5 +1,5 @@
-from track_generator import TrackGenerator, SimType
-from utils import Mode
+from track_generator import TrackGenerator
+from utils import Mode, SimType
 
 # Input parameters
 n_points = 60
@@ -7,6 +7,7 @@ n_regions = 20
 min_bound = 0.
 max_bound = 150.
 mode = Mode.EXTEND
+sim_type = SimType.FSDS
 
 # Output options
 plot_track = True
@@ -15,5 +16,5 @@ create_output_file = True
 output_location = '/'
 
 # Generate track
-track_gen = TrackGenerator(n_points, n_regions, min_bound, max_bound, mode, plot_track, visualise_voronoi,create_output_file, output_location, SimType.FSDS)
+track_gen = TrackGenerator(n_points, n_regions, min_bound, max_bound, mode, plot_track, visualise_voronoi,create_output_file, output_location, sim_type)
 track_gen.create_track()
