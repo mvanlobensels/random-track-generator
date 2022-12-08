@@ -21,6 +21,17 @@ class Mode(Enum):
     EXTEND = 2
     RANDOM = 3
 
+class SimType(Enum):
+    """ Selection between output format for different simulators.
+
+    1. FSSIM:
+        Output FSSIM compatible .yaml file.
+    2. FSDS:
+        Output FSDS compatible .csv file 
+    """
+    FSSIM = 1
+    FSDS = 2   
+
 def closest_node(node, nodes, k):
     """
     Returns the index of the k-th closest node.
