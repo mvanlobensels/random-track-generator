@@ -30,7 +30,8 @@ class SimType(Enum):
         Output FSDS compatible .csv file 
     """
     FSSIM = 1
-    FSDS = 2   
+    FSDS = 2
+    GPX = 3 
 
 def closest_node(node, nodes, k):
     """
