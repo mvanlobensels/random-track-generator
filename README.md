@@ -38,7 +38,7 @@ The tracks are generated using a bounded Voronoi diagram, which is created from 
 * *visualise_voronoi*: Visualise the Voronoi diagram and selected regions.
 * *create_output_file*: Create yaml output track file.
 * *output_location*: Location to output track file.
-* *simtype*: Selection between output format for different simulators
+* *sim_type*: Selection between output format for different simulators
   
 <p float="middle">
   <img src="img/voronoi.png" width="50%" /> 

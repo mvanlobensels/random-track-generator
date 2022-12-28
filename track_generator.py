@@ -4,15 +4,9 @@ import matplotlib.pyplot as plt
 from scipy import signal, spatial, interpolate
 from shapely.geometry.polygon import Point, LineString, Polygon
 from utils import *
-from enum import Enum
 import math
 import gpxpy
 import gpxpy.gpx
-
-class SimType(Enum):
-    FSSIM = 0
-    FSDS = 1
-    GPX = 2
 
 class TrackGenerator:
     """
@@ -33,7 +27,7 @@ class TrackGenerator:
                  z_offset: float = 0,
                  lat_offset: float = 0,
                  lon_offset: float = 0,
-                 simtype: SimType = SimType.FSSIM):
+                 sim_type: SimType = SimType.FSSIM):
                  
         # Input parameters
         self._n_points = n_points                                               # [-]
@@ -42,7 +36,7 @@ class TrackGenerator:
         self._max_bound = max_bound                                             # [m]
         self._bounding_box = np.array([self._min_bound, self._max_bound] * 2)   # [x_min, x_max, y_min, y_max]
         self._mode = mode
-        self._simtype = simtype
+        self._sim_type = sim_type
 
         # Track parameters
         self._track_width = 3.                                                  # [m]
@@ -307,7 +301,7 @@ class TrackGenerator:
         abs_path_dir = os.path.realpath(os.path.dirname(__file__))
         track_file_dir = abs_path_dir + self._output_location
         
-        if(self._simtype == SimType.FSSIM):
+        if(self._sim_type == SimType.FSSIM):
             track_file_name = track_file_dir + 'random_track.yaml'
 
             with open(track_file_name, 'w') as outfile:
@@ -320,7 +314,7 @@ class TrackGenerator:
                 data['tk_device'] = [[6., 3.], [6., -3.]]
                 yaml.dump(data, outfile)
             
-        elif(self._simtype == SimType.FSDS):
+        elif(self._sim_type == SimType.FSDS):
             track_file_name = track_file_dir + 'random_track.csv'
             
             print("Saving " + track_file_name)
