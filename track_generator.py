@@ -330,7 +330,7 @@ class TrackGenerator:
                 outfile.write("big_orange,4.7,-2.2,0,0.01,0.01,0\n")
                 outfile.write("big_orange,7.3,2.2,0,0.01,0.01,0\n")
                 outfile.write("big_orange,7.3,-2.2,0,0.01,0.01,0\n")
-        elif(self._simtype == SimType.GPX):
+        elif(self._sim_type == SimType.GPX):
             track_file_name = track_file_dir + 'random_track.gpx'
             gpx = gpxpy.gpx.GPX()
 
