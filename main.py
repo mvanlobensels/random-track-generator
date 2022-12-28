@@ -15,5 +15,5 @@ create_output_file = True
 output_location = '/'
 
 # Generate track
-track_gen = TrackGenerator(n_points, n_regions, min_bound, max_bound, mode, plot_track, visualise_voronoi,create_output_file, output_location, SimType.FSDS)
+track_gen = TrackGenerator(n_points, n_regions, min_bound, max_bound, mode, plot_track, visualise_voronoi, create_output_file, output_location, lat_offset=51.197682, lon_offset=5.323411, simtype=SimType.GPX)
 track_gen.create_track()

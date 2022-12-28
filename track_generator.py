@@ -5,10 +5,14 @@ from scipy import signal, spatial, interpolate
 from shapely.geometry.polygon import Point, LineString, Polygon
 from utils import *
 from enum import Enum
+import math
+import gpxpy
+import gpxpy.gpx
 
 class SimType(Enum):
     FSSIM = 0
     FSDS = 1
+    GPX = 2
 
 class TrackGenerator:
     """
@@ -26,7 +30,10 @@ class TrackGenerator:
                  visualise_voronoi: bool,
                  create_output_file: bool, 
                  output_location: str,
-                 simtype: SimType):
+                 z_offset: float = 0,
+                 lat_offset: float = 0,
+                 lon_offset: float = 0,
+                 simtype: SimType = SimType.FSSIM):
                  
         # Input parameters
         self._n_points = n_points                                               # [-]
@@ -49,6 +56,9 @@ class TrackGenerator:
         self._visualise_voronoi = visualise_voronoi
         self._create_output_file = create_output_file
         self._output_location = output_location
+        self._z_offset = z_offset
+        self._lat_offset = lat_offset
+        self._lon_offset = lon_offset
 
     def bounded_voronoi(self, input_points, bounding_box):
         """
@@ -326,3 +336,24 @@ class TrackGenerator:
                 outfile.write("big_orange,4.7,-2.2,0,0.01,0.01,0\n")
                 outfile.write("big_orange,7.3,2.2,0,0.01,0.01,0\n")
                 outfile.write("big_orange,7.3,-2.2,0,0.01,0.01,0\n")
+        elif(self._simtype == SimType.GPX):
+            track_file_name = track_file_dir + 'random_track.gpx'
+            gpx = gpxpy.gpx.GPX()
+
+            # Create first track in our GPX:
+            gpx_track = gpxpy.gpx.GPXTrack()
+            gpx.tracks.append(gpx_track)
+            
+            # Create points:
+            for cone in cones_left:
+                lat  = self._lat_offset  + (cone[1] / 6378100) * (180 / math.pi)
+                lon = self._lon_offset + (cone[0] / 6378100) * (180 / math.pi) / math.cos(self._lat_offset * math.pi/180)
+                gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, elevation=0 + self._z_offset))
+                
+            for cone in cones_right:
+                lat  = self._lat_offset  + (cone[1] / 6378100) * (180 / math.pi)
+                lon = self._lon_offset + (cone[0] / 6378100) * (180 / math.pi) / math.cos(self._lat_offset * math.pi/180)
+                gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, elevation=0 + self._z_offset))
+            
+            with open(track_file_name, 'w') as outfile:
+                outfile.writelines(gpx.to_xml())
