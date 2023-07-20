@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 from scipy import signal, spatial, interpolate
 from shapely.geometry.polygon import Point, LineString, Polygon
 from utils import *
-from enum import Enum
+import math
+import gpxpy
+import gpxpy.gpx
 
 class TrackGenerator:
     """
@@ -22,7 +24,10 @@ class TrackGenerator:
                  visualise_voronoi: bool,
                  create_output_file: bool, 
                  output_location: str,
-                 sim_type: SimType):
+                 z_offset: float = 0,
+                 lat_offset: float = 0,
+                 lon_offset: float = 0,
+                 sim_type: SimType = SimType.FSSIM):
                  
         # Input parameters
         self._n_points = n_points                                               # [-]
@@ -45,6 +50,9 @@ class TrackGenerator:
         self._visualise_voronoi = visualise_voronoi
         self._create_output_file = create_output_file
         self._output_location = output_location
+        self._z_offset = z_offset
+        self._lat_offset = lat_offset
+        self._lon_offset = lon_offset
 
     def bounded_voronoi(self, input_points, bounding_box):
         """
@@ -81,7 +89,7 @@ class TrackGenerator:
         
         # We only need the section of the Voronoi diagram that is inside the bounding box
         vor.filtered_points = points_center
-        vor.filtered_regions = np.array(vor.regions)[vor.point_region[:vor.npoints//5]]
+        vor.filtered_regions = np.array(vor.regions, dtype=object)[vor.point_region[:vor.npoints//5]]
         return vor
 
     def create_track(self):
@@ -132,7 +140,7 @@ class TrackGenerator:
                 random_point_indices = np.random.randint(0, self._n_points, self._n_regions)
             
             # From the Voronoi regions, get the regions belonging to the randomly selected points
-            regions = np.array([np.array(region) for region in vor.regions])
+            regions = np.array([np.array(region) for region in vor.regions], dtype=object)
             random_region_indices = vor.point_region[random_point_indices]
             random_regions = np.concatenate(regions[random_region_indices])
             
@@ -212,8 +220,9 @@ class TrackGenerator:
             start_line_index = np.where(length_straights > length_start_area)[0][0]
         except IndexError:
             raise Exception("Unable to find suitable starting position. Try to decrease the length of the starting area or different input parameters.")
-        start_line = [x[start_line_index], y[start_line_index]]
-        start_position = np.asarray(track.exterior.interpolate(np.sum(distances[:start_line_index]) - length_start_area)).flatten() 
+        start_line = np.array([x[start_line_index], y[start_line_index]])
+        start_position = np.asarray(track.exterior.interpolate(np.sum(distances[:start_line_index]) - length_start_area)).flatten()
+        start_position = np.array([start_position[0].x, start_position[0].y]) 
         start_heading = float(np.arctan2(*(start_line - start_position)))
 
         # Translate and rotate track to origin
@@ -322,3 +331,24 @@ class TrackGenerator:
                 outfile.write("big_orange,4.7,-2.2,0,0.01,0.01,0\n")
                 outfile.write("big_orange,7.3,2.2,0,0.01,0.01,0\n")
                 outfile.write("big_orange,7.3,-2.2,0,0.01,0.01,0\n")
+        elif(self._sim_type == SimType.GPX):
+            track_file_name = track_file_dir + 'random_track.gpx'
+            gpx = gpxpy.gpx.GPX()
+
+            # Create first track in our GPX:
+            gpx_track = gpxpy.gpx.GPXTrack()
+            gpx.tracks.append(gpx_track)
+            
+            # Create points:
+            for cone in cones_left:
+                lat  = self._lat_offset  + (cone[1] / 6378100) * (180 / math.pi)
+                lon = self._lon_offset + (cone[0] / 6378100) * (180 / math.pi) / math.cos(self._lat_offset * math.pi/180)
+                gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, elevation=0 + self._z_offset))
+                
+            for cone in cones_right:
+                lat  = self._lat_offset  + (cone[1] / 6378100) * (180 / math.pi)
+                lon = self._lon_offset + (cone[0] / 6378100) * (180 / math.pi) / math.cos(self._lat_offset * math.pi/180)
+                gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, elevation=0 + self._z_offset))
+            
+            with open(track_file_name, 'w') as outfile:
+                outfile.writelines(gpx.to_xml())
