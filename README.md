@@ -1,6 +1,6 @@
 # Random Track Generator
 
-![Python](https://img.shields.io/badge/python-%3E%3D3.7.8-blue)
+![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 <p float="middle">
@@ -23,7 +23,7 @@ Tracks are generated using bounded Voronoi diagrams from uniformly sampled point
 ## Installation
 
 ```bash
-pip3 install -r requirements.txt
+uv sync
 ```
 
 ## Usage
@@ -66,7 +66,7 @@ track_gen.create_track()
 ### Quick Start
 
 ```bash
-python3 main.py
+uv run python main.py
 ```
 
 Edit parameters directly in `main.py` or use the `TrackGenerator` class in your own scripts.

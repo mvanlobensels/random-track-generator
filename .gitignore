@@ -3,3 +3,7 @@ __pycache__/
 *.yaml
 *.csv
 *.gpx
+
+# uv
+.venv/
+.python-version
