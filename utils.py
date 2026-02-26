@@ -1,37 +1,4 @@
 import numpy as np
-from enum import Enum
-
-class Mode(Enum):
-    """ 
-    Possible modes for how Voronoi regions are selected.
-    
-    1. Expand:
-        Find closest nodes around starting node.
-        Results in roundish track shapes.
-    
-    2. Extend:
-        Find nodes closest to line extending from starting node.
-        Results in elongated track shapes.
-        
-    3. Random:
-        Select all regions randomly.
-        Results in large track shapes.
-    """
-    EXPAND = 1
-    EXTEND = 2
-    RANDOM = 3
-
-class SimType(Enum):
-    """ Selection between output format for different simulators.
-
-    1. FSSIM:
-        Output FSSIM compatible .yaml file.
-    2. FSDS:
-        Output FSDS compatible .csv file 
-    """
-    FSSIM = 1
-    FSDS = 2
-    GPX = 3 
 
 def closest_node(node, nodes, k):
     """
