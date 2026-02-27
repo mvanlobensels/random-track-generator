@@ -72,7 +72,7 @@ class TrackGenerator:
         vor.filtered_regions = np.array(vor.regions, dtype=object)[vor.point_region[:vor.npoints//5]]
         return vor
 
-    def create_track(self):
+    def create_track(self, seed: int | None = None) -> Track:
         """
         Creates a track from the vertices of a Voronoi diagram.
         1.  Create bounded Voronoi diagram.
@@ -86,15 +86,17 @@ class TrackGenerator:
         8.  Find long enough straight section to place start line and start position.
         9.  Translate and rotate track to origin.
         """
+        rng = np.random.default_rng(seed)
+
         # Create bounded Voronoi diagram
-        input_points = np.random.uniform(self.min_bound, self.max_bound, (self.n_points, 2))
+        input_points = rng.uniform(self.min_bound, self.max_bound, (self.n_points, 2))
         vor = self.bounded_voronoi(input_points, self.bounding_box)
 
         while True:
             
-            if self.mode.value == 1:
+            if self.mode == Mode.EXPAND:
                 # Pick a random point and find its n closest neighbours
-                random_index = np.random.randint(0, self.n_points)
+                random_index = rng.integers(0, self.n_points)
                 random_point_indices = [random_index]
                 random_point = input_points[random_index]
                 
@@ -102,10 +104,10 @@ class TrackGenerator:
                     closest_point_index = closest_node(random_point, input_points, k=i+1)
                     random_point_indices.append(closest_point_index)
                     
-            elif self.mode.value == 2:
+            elif self.mode == Mode.EXTEND:
                 # Pick a random point, create a line extending from this point and find other points close to this line
-                random_index = np.random.randint(0, self.n_points)
-                random_heading = np.random.uniform(0, np.pi/2)
+                random_index = rng.integers(0, self.n_points)
+                random_heading = rng.uniform(0, np.pi/2)
                 random_point = input_points[random_index]
                 
                 start = (random_point[0] - 1./2. * self.max_bound * np.cos(random_heading), random_point[1] - 1./2. * self.max_bound * np.sin(random_heading))
@@ -114,9 +116,9 @@ class TrackGenerator:
                 distances = [Point(p).distance(line) for p in input_points]
                 random_point_indices = np.argpartition(distances, self.n_regions)[:self.n_regions]
                 
-            elif self.mode.value == 3:
+            elif self.mode == Mode.RANDOM:
                 # Select regions randomly
-                random_point_indices = np.random.randint(0, self.n_points, self.n_regions)
+                random_point_indices = rng.integers(0, self.n_points, self.n_regions)
             
             # From the Voronoi regions, get the regions belonging to the randomly selected points
             regions = np.array([np.array(region) for region in vor.regions], dtype=object)
@@ -212,10 +214,10 @@ class TrackGenerator:
 
         return track
     
-    def generate(self) -> Track:
+    def generate(self, seed: int | None = None) -> Track:
         while True:
             try:
-                track = self.create_track()
+                track = self.create_track(seed)
                 return track
             except:
                 continue
