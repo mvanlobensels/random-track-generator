@@ -49,10 +49,22 @@ class Track:
     cones_right: np.ndarray
 
     def as_tuple(self):
+        """ Returns cones as tuple of left and right cones.
+        """
         return self.cones_left, self.cones_right
 
     def save(self, location: str | Path, sim_type: SimType | str, *,
              lat_offset: float = 0.0, lon_offset: float = 0.0, z_offset: float = 0.0):
+        """ Saves track in specified format for use in different simulators.
+
+        Args:
+            location: Location to save track to.
+            sim_type: Format to save track in. Must be either "fssim", "fsds" or "gpx".
+            lat_offset: Latitude offset for GPX output format, in degrees.
+            lon_offset: Longitude offset for GPX output format, in degrees.
+            z_offset: Altitude offset for GPX output format, in meters.
+        """
+        sim_type = SimType[sim_type.upper()] if isinstance(sim_type, str) else SimType(sim_type)
         path = Path(location)
 
         if sim_type == SimType.FSSIM:
