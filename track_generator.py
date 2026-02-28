@@ -14,7 +14,7 @@ LENGTH_START_AREA = 6.             # [m]
 CURVATURE_THRESHOLD = 1. / 3.75    # [m^-1]
 STRAIGHT_THRESHOLD = 1. / 100.     # [m^-1]
 
-def _bounded_voronoi(input_points, bounding_box):
+def _bounded_voronoi(input_points: np.ndarray, bounding_box: np.ndarray) -> spatial.Voronoi:
     """
     Creates a Voronoi diagram bounded by the bounding box.
     Mirror input points at edges of the bounding box.
@@ -22,14 +22,14 @@ def _bounded_voronoi(input_points, bounding_box):
     This prevents having a Voronoi diagram with edges going off to infinity.
     
     Args:
-        input_points (numpy.ndarray): Coordinates of input points for Voronoi diagram.
-        bounding_box (numpy.ndarray): Specifies the boundaries of the Voronoi diagram, [x_min, x_max, y_min, y_max].
+        input_points: Coordinates of input points for Voronoi diagram.
+        bounding_box: Specifies the boundaries of the Voronoi diagram, [x_min, x_max, y_min, y_max].
     
     Returns:
-        scipy.spatial.qhull.Voronoi: Voronoi diagram object.
+        Voronoi diagram object.
     """
     
-    def _mirror(boundary, axis):
+    def _mirror(boundary: float, axis: int) -> np.ndarray:
         mirrored = np.copy(points_center)
         mirrored[:, axis] = 2 * boundary - mirrored[:, axis]
         return mirrored
@@ -72,10 +72,10 @@ def _create_track(n_points: int,
     9.  Translate and rotate track to origin.
 
     Args:
-        seed (int | None): seed for random number generator.
+        seed: seed for random number generator.
     
     Returns:
-        Track: generated track object.
+        Generated track object.
     """
     rng = np.random.default_rng(seed)
 
@@ -222,6 +222,9 @@ def generate_track(n_points: int,
         max_bound: Maximum boundary value for the track.
         mode: Mode of generation.
         seed: Random seed for reproducibility.
+
+    Returns:
+        Generated track object.
     """
     mode = Mode[mode.upper()] if isinstance(mode, str) else Mode(mode)
 
@@ -240,7 +243,10 @@ def load_track(name: str) -> Track:
         name: Name of track to load. Must be either "FSG" or "FSI".
     
     Returns:
-        Track: loaded track object.
+        Loaded track object.
+
+    Raises:
+        FileNotFoundError: If track with given name is not found in tracks folder.
     """
     try:
         data = yaml.safe_load(open(Path(__file__).parent / "tracks" / f"{name}.yaml"))
