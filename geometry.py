@@ -76,12 +76,15 @@ def transformation_matrix(displacement, angle):
     Returns:
         numpy.ndarray: 3x3 transformation matrix.
     """
-    h, k = displacement
     c, s = np.cos(angle), np.sin(angle)
-    
-    M = np.array([
-        [c,    -s,      h * c - k * s],
-        [s,     c,      h * s + k * c],
-        [0,     0,            1      ]
+    R = np.array([
+        [c, -s],
+        [s,  c]
     ])
-    return M
+    tx, ty = R @ displacement
+    
+    return np.array([
+        [c, -s, tx],
+        [s,  c, ty],
+        [0,  0,  1]
+    ])

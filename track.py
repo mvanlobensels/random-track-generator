@@ -91,10 +91,3 @@ class Track:
                 gpx.waypoints.append(gpxpy.gpx.GPXWaypoint(latitude=lat, longitude=lon, elevation=z_offset))
 
             (path / "random_track.gpx").write_text(gpx.to_xml())
-    
-def _load(name: str) -> Track:
-    data = yaml.safe_load(open(Path(__file__).parent / "tracks" / f"{name}.yaml"))
-    return Track(np.array(data["cones_left"]), np.array(data["cones_right"]))
-
-FSG = _load("FSG")
-FSI = _load("FSI")

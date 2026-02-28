@@ -1,4 +1,3 @@
-from .track_generator import TrackGenerator
-from .track import Track, FSG, FSI
+from .track_generator import generate_track, load_track
 
-__all__ = ["TrackGenerator", "Track", "FSG", "FSI"]
+__all__ = ["generate_track", "load_track"]
