@@ -1,6 +1,7 @@
 __pycache__/
 .vscode/
 *.yaml
+!tracks/*.yaml
 *.csv
 *.gpx
 

@@ -28,54 +28,49 @@ uv sync
 
 ## Usage
 
-### Basic Example
+### Generate a random track
 
 ```python
-from track_generator import TrackGenerator
-from utils import Mode, SimType
+from random_track_generator import generate_track
 
-# Configure track generation
-track_gen = TrackGenerator(
-    n_points=60,           # Voronoi points
-    n_regions=20,          # Regions to select
-    min_bound=0.,          # Minimum x/y bound
-    max_bound=150.,        # Maximum x/y bound
-    mode=Mode.EXTEND,      # Selection mode
-    plot_track=True,
-    visualise_voronoi=True,
-    create_output_file=True,
-    output_location='/',
-    sim_type=SimType.FSSIM
+track = generate_track(
+    n_points=60,       # Voronoi points
+    n_regions=20,      # Regions to select
+    min_bound=0.,      # Minimum x/y bound [m]
+    max_bound=150.,    # Maximum x/y bound [m]
+    mode="extend",     # Generation mode
+    seed=42            # Optional: for reproducibility
 )
 
-track_gen.create_track()
+cones_left, cones_right = track.as_tuple()
 ```
 
-### Generation Modes
+#### Generation Modes
 
-- **`Mode.EXPAND`** - Selects nearest neighbors for roundish tracks
-- **`Mode.EXTEND`** - Selects regions along a random line for elongated tracks
-- **`Mode.RANDOM`** - Randomly selects regions for large, irregular tracks
+- **`"expand"`** - Selects nearest neighbors for roundish tracks
+- **`"extend"`** - Selects regions along a random line for elongated tracks
+- **`"random"`** - Randomly selects regions for large, irregular tracks
 
-### Simulator Output
-
-- **`SimType.FSSIM`** - Exports YAML format for FSSIM
-- **`SimType.FSDS`** - Exports CSV format for FSDS
-- **`SimType.GPX`** - Exports GPX format with lat/lon coordinates
-
-### Quick Start
-
-```bash
-uv run python main.py
-```
-
-Edit parameters directly in `main.py` or use the `TrackGenerator` class in your own scripts.
-
-## Configuration
-
-All generation parameters can be configured through the `TrackGenerator` constructor. Key parameters include Voronoi diagram bounds, region selection count, track constraints (width, cone spacing, curvature), and output options.
 
 > **Note:** Not all parameter combinations produce stable results. Experiment with settings if generation fails.
+
+### Load a preset track
+
+```python
+from random_track_generator import load_track
+
+track = load_track("FSG")
+cones_left, cones_right = track.as_tuple()
+```
+
+### Save to file
+
+```python
+track.save("output/", sim_type="fssim")         # YAML for FSSIM
+track.save("output/", sim_type="fsds")          # CSV for FSDS
+track.save("output/", sim_type="gpx", 
+           lat_offset=51.19, lon_offset=5.32)   # GPX with coordinates
+```
 
 ## Credits
 
