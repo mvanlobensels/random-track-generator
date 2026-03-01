@@ -1,14 +1,18 @@
 [project]
 name = "random-track-generator"
-version = "0.1.0"
-description = "Add your description here"
+version = "1.0.0"
+description = "Generate random Formula Student Driverless race tracks."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "gpxpy>=1.5.0",
-    "matplotlib>=3.5.0",
     "numpy>=1.21.0,<2.0",
     "pyyaml>=6.0",
     "scipy>=1.8.1",
     "shapely>=2.0.1",
 ]
+[tool.setuptools.packages.find]
+include = ["random_track_generator*"]
+
+[tool.setuptools.package-data]
+random_track_generator = ["tracks/*.yaml"]
