@@ -23,7 +23,7 @@ Tracks are generated using bounded Voronoi diagrams from uniformly sampled point
 ## Installation
 
 ```bash
-uv sync
+pip install random-track-generator
 ```
 
 ## Usage
