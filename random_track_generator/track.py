@@ -37,6 +37,21 @@ class SimType(Enum):
     FSDS = 2
     GPX = 3
 
+class Preset(Enum):
+    """
+    Preset track input parameters.
+
+    1. Small:
+        Small track.
+    2. Medium:
+        Mid-sized track.
+    3. Large:
+        Large track.
+    """
+    SMALL = 1
+    MEDIUM = 2
+    LARGE = 3    
+
 @dataclass
 class Track:
     """ Track dataclass
