@@ -5,9 +5,14 @@ from scipy import signal, spatial, interpolate
 from shapely.geometry.polygon import Point, LineString, Polygon
 
 from .geometry import closest_node, clockwise_sort, curvature, arc_length, transformation_matrix
-from .track import Track, Mode
+from .track import Track, Mode, Preset
 
-# Track parameters
+PRESET_PARAMS: dict[Preset, dict] = {
+    Preset.SMALL:  dict(n_points=15, n_regions=3, min_bound=0., max_bound=60.,  mode=Mode.EXPAND),
+    Preset.MEDIUM: dict(n_points=20, n_regions=5, min_bound=0., max_bound=100., mode=Mode.EXPAND),
+    Preset.LARGE:  dict(n_points=25, n_regions=7, min_bound=0., max_bound=150., mode=Mode.EXTEND),
+}
+
 TRACK_WIDTH = 3.                   # [m]
 CONE_SPACING = 5.                  # [m]
 LENGTH_START_AREA = 6.             # [m]
@@ -206,16 +211,23 @@ def _create_track(n_points: int,
 
     return track
 
-def generate_track(n_points: int, 
-                   n_regions: int, 
-                   min_bound: float, 
-                   max_bound: float, 
-                   mode: Mode | str = Mode.EXPAND,
+def generate_track(preset: Preset | str | None = None,
+                   *,
+                   n_points: int | None = None, 
+                   n_regions: int | None = None, 
+                   min_bound: float | None = None, 
+                   max_bound: float | None = None, 
+                   mode: Mode | str = Mode.RANDOM,
                    seed: int | None = None) -> Track:
     """
     Generates a track from the vertices of a Voronoi diagram.
+    A preset can be provided for quick generation, with optional keyword
+    arguments to override individual preset values. Alternatively, all
+    parameters can be set explicitly without a preset.    
 
     Args: 
+        preset: Size preset ("small", "medium", or "large"). When given,
+            any unspecified keyword arguments are filled from the preset.    
         n_points: Number of points to generate for the Voronoi diagram.
         n_regions: Number of regions in the Voronoi diagram.
         min_bound: Minimum boundary value for the track.
@@ -225,12 +237,41 @@ def generate_track(n_points: int,
 
     Returns:
         Generated track object.
+
+    Raises:
+        ValueError: If required parameters are missing (no preset given and
+            not all of n_points, n_regions, min_bound, max_bound are set).
+
+    Examples:
+        >>> generate_track("medium")
+        >>> generate_track("large", seed=42)
+        >>> generate_track("small", n_regions=5)
+        >>> generate_track(n_points=20, n_regions=6, min_bound=0., max_bound=100.)        
     """
-    mode = Mode[mode.upper()] if isinstance(mode, str) else Mode(mode)
+    params = {}
+
+    if preset is not None:
+        preset = Preset[preset.upper()] if isinstance(preset, str) else Preset(preset)
+        params.update(PRESET_PARAMS[preset])
+
+    # Explicit keyword args override preset values
+    if n_points is not None:  params["n_points"]  = n_points
+    if n_regions is not None: params["n_regions"] = n_regions
+    if min_bound is not None: params["min_bound"] = min_bound
+    if max_bound is not None: params["max_bound"] = max_bound
+    params["mode"] = Mode[mode.upper()] if isinstance(mode, str) else Mode(mode)        
+
+    required = ("n_points", "n_regions", "min_bound", "max_bound")
+    missing = [r for r in required if r not in params]
+    if missing:
+        raise ValueError(
+            f"Missing required parameters: {missing}. "
+            "Provide a preset or set them explicitly."
+        )
 
     while True:
         try:
-            track = _create_track(n_points, n_regions, min_bound, max_bound, mode, seed)
+            track = _create_track(**params, seed=seed)
             return track
         except:
             continue
