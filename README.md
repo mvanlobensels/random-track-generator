@@ -33,6 +33,12 @@ pip install random-track-generator
 ```python
 from random_track_generator import generate_track
 
+# Use preset parameters
+track = generate_track("small")
+track = generate_track("medium")
+track = generate_track("large", seed=42)
+
+# Or set parameters manually
 track = generate_track(
     n_points=60,       # Voronoi points
     n_regions=20,      # Regions to select
@@ -59,7 +65,7 @@ cones_left, cones_right = track.as_tuple()
 ```python
 from random_track_generator import load_track
 
-track = load_track("FSG")
+track = load_track("FSG")                       # FSG and FSI available
 cones_left, cones_right = track.as_tuple()
 ```
 
