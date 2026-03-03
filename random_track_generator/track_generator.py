@@ -8,9 +8,9 @@ from .geometry import closest_node, clockwise_sort, curvature, arc_length, trans
 from .track import Track, Mode, Preset
 
 PRESET_PARAMS: dict[Preset, dict] = {
-    Preset.SMALL:  dict(n_points=15, n_regions=3, min_bound=0., max_bound=60.,  mode=Mode.EXPAND),
-    Preset.MEDIUM: dict(n_points=20, n_regions=5, min_bound=0., max_bound=100., mode=Mode.EXPAND),
-    Preset.LARGE:  dict(n_points=25, n_regions=7, min_bound=0., max_bound=150., mode=Mode.EXTEND),
+    Preset.SMALL:  dict(n_points=15, n_regions=3, min_bound=0., max_bound=50.,   mode=Mode.EXTEND),
+    Preset.MEDIUM: dict(n_points=30, n_regions=10, min_bound=0., max_bound=100., mode=Mode.RANDOM),
+    Preset.LARGE:  dict(n_points=60, n_regions=20, min_bound=0., max_bound=150., mode=Mode.RANDOM),
 }
 
 TRACK_WIDTH = 3.                   # [m]
