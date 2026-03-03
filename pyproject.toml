@@ -1,6 +1,6 @@
 [project]
 name = "random-track-generator"
-version = "1.0.1"
+version = "1.1.0"
 description = "Generate random Formula Student Driverless race tracks."
 readme = "README.md"
 requires-python = ">=3.11"
