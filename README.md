@@ -4,7 +4,7 @@
 ![Python](https://img.shields.io/badge/python-%3E%3D3.11-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-<p float="middle">
+<p align="center">
   <img src="img/extend.png" width="45%" />
   <img src="img/expand.png" width="45%" />
 </p>
@@ -17,7 +17,7 @@ Developed by [Formula Student Team Delft](https://fsteamdelft.nl) for use with [
 
 Tracks are generated using bounded Voronoi diagrams from uniformly sampled points. Regions are selected using one of three modes (**Expand**, **Extend**, or **Random**), then interpolated with cubic splines to create smooth, realistic racing lines.
 
-<p float="middle">
+<p align="center">
   <img src="img/voronoi.png" width="50%" />
 </p>
 
